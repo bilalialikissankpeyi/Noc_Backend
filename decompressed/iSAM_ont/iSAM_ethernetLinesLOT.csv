@@ -1,9 +1,0 @@
-ObjectID,extendEtherPortStatisticsIfInDiscards,extendEtherPortStatisticsIfInNUcastPkts,extendEtherPortStatisticsIfInOctets,extendEtherPortStatisticsIfOutDiscards,extendEtherPortStatisticsIfOutNUcastPkts,extendEtherPortStatisticsIfOutOctets,ifAdminStatus,ifHighSpeed,ifOperStatus
-R1.S1.NTA.P2,0,0,0,0,0,0,down,0,down
-R1.S1.NTA.P5,0,0,0,0,0,0,down,0,down
-R1.S1.NTA.P1,0,42216302,2008194018379839,0,3478040,214088833382835,up,10000,up
-R1.S1.NTA.P7,0,0,0,0,0,0,down,0,down
-R1.S1.NTA.P8,0,0,0,0,0,0,down,0,down
-R1.S1.NTA.P6,0,0,0,0,0,0,down,0,down
-R1.S1.NTA.P3,0,0,0,0,0,0,down,0,down
-R1.S1.NTA.P4,0,0,0,0,0,0,down,0,down

@@ -1,0 +1,179 @@
+
+/*
+mapForMinutes = async (csvFilePath, root) => {
+  console.log({ ddddd: csvFilePath.length })
+  for (i = 0; i < csvFilePath.length; i += 1) {
+    pathTofile = `${root}/${csvFilePath[i]}`
+    // console.log('this is data', i)
+    let res = await encapExtract(pathTofile, i, root)
+    console.log('result ', res.i)
+    //console.log(`file after : ${pathTofile}`, fullString)
+    // console.log(`The data after header Extraction:`, res.data)
+    //await Promise.all(res.data)
+    writeIntoTheFile(pathTofile, res.data)
+    console.log('hiii hiii')
+    /*  switch (i) {
+      case 0:
+        objectTorender.minutesObjectToRender.bridgePort.push(
+          outputJsonObject(pathTofile, i, userONT)
+        )
+        break
+      case 1:
+        objectTorender.minutesObjectToRender.ontOntAggGem.push(
+          outputJsonObject(pathTofile, i, userONT)
+        )
+        break
+      case 2:
+        objectTorender.minutesObjectToRender.vlanPortAssociation.push(
+          outputJsonObject(pathTofile, i, userONT)
+        )
+        break
+      default:
+        text = 'Looking forward to the Weekend'
+    }
+  }
+}
+
+mapForHours = async (csvFilePath, root) => {
+  console.log({ ddddd: csvFilePath.length })
+  for (i = 0; i < csvFilePath.length; i += 1) {
+    pathTofile = `${root}/${csvFilePath[i]}`
+    // console.log('this is data', i)
+    let res = await encapExtract(pathTofile, i, root)
+    console.log('result ', res.i)
+    //console.log(`file after : ${pathTofile}`, fullString)
+    // console.log(`The data after header Extraction:`, res.data)
+    //await Promise.all(res.data)
+    writeIntoTheFile(pathTofile, res.data)
+    console.log('hiii hiii')
+
+    //buildRenderObject(await outputJsonObject(pathTofile, i, userONT), i)
+    /*  switch (i) {
+      case 0:
+        console.log('zero')
+        objectTorender.hoursObjectToRender.IHUB_ethernetport.push(
+          outputJsonObject(pathTofile, i, userONT)
+        )
+
+        break
+      case 1:
+        objectTorender.hoursObjectToRender.cpuMemUsage.push(
+          outputJsonObject(pathTofile, i, userONT)
+        )
+        break
+      case 2:
+        objectTorender.hoursObjectToRender.ethernetLineslot.push(
+          outputJsonObject(pathTofile, i, userONT)
+        )
+        break
+      case 3:
+        objectTorender.hoursObjectToRender.ont.push(
+          outputJsonObject(pathTofile, i, userONT)
+        )
+
+        break
+      case 4:
+        objectTorender.hoursObjectToRender.ontEthPort.push(
+          outputJsonObject(pathTofile, i, userONT)
+        )
+        break
+      case 5:
+        objectTorender.hoursObjectToRender.ontVeipPort.push(
+          outputJsonObject(pathTofile, i, userONT)
+        )
+        break
+
+      case 6:
+        objectTorender.hoursObjectToRender.pon.push(
+          outputJsonObject(pathTofile, i, userONT)
+        )
+        break
+      case 7:
+        objectTorender.hoursObjectToRender.uni.push(
+          outputJsonObject(pathTofile, i, userONT)
+        )
+        break
+      case 8:
+        objectTorender.hoursObjectToRender.vlanPortAssociationCurrentData.push(
+          outputJsonObject(pathTofile, i, userONT)
+        )
+        break
+      default:
+        text = 'Looking forward to the Weekend'
+    }
+  }
+}
+
+mapForDays = async (csvFilePath, root) => {
+  console.log({ ddddd: csvFilePath.length })
+  for (i = 0; i < csvFilePath.length; i += 1) {
+    pathTofile = `${root}/${csvFilePath[i]}`
+    // console.log('this is data', i)
+    let res = await encapExtract(pathTofile, i, root)
+    console.log('result ', res.i)
+    //console.log(`file after : ${pathTofile}`, fullString)
+    // console.log(`The data after header Extraction:`, res.data)
+    //await Promise.all(res.data)
+    writeIntoTheFile(pathTofile, res.data)
+    console.log('hiii hiii')
+    /*switch (i) {
+      case 0:
+        objectTorender.daysObjectToRender.vlanPortAssociation.push(
+          outputJsonObject(pathTofile, i, userONT)
+        )
+        break
+      default:
+        text = 'Looking forward to the Weekend'
+    }
+  }
+}
+*/
+/*
+FifteenTo1HourSelection = (difference) => {
+  return []
+}
+
+OneHourTo1DaySelection = (difference) => {
+  return []
+}
+
+OneDayToMoreSelection = (difference) => {
+  return []
+}
+getTimeSpots = (intervalle) => {
+  var selectedTime = []
+  modulo = modulo1(toDays(intervalle))
+  if (toDays(intervalle) >= 1 && toDays(intervalle) % 2 != 0) {
+    //temps ==1j et superieur
+    selectedTime = OneDayToMoreSelection()
+  } else if (toDays(intervalle) < 1) {
+    if (modulo < 0.010416) {
+      /*rien a faire */
+    } else if (modulo >= 0.010416 && modulo < 0.41666) {
+      /*Donner sur 1 h*/
+    } else if (modulo >= 0.010416 && modulo < 0.41666) {
+      Math.round(modulo * 24 * 60)
+      /*Donner sur 1 h*/
+    } else if (modulo >= 0.41666 && modulo < 0.9999) {
+      Math.round(modulo * 24)
+      /*Donner sur 23 h*/
+    }
+    //temps = a 15 minute et inferieur a 1h
+    selectedTime = FifteenTo1HourSelection()
+  } else if (toDays(intervalle) < 1) {
+    //temps >= 1h et inferieur a 1j
+    selectedTime = OneHourTo1DaySelection()
+  }
+  return selectedTime
+}*/
+
+
+/*
+function modulo1(time) {
+  return time % 1
+}
+function toDays(d) {
+  d = d || 0
+  return d / 24 / 60 / 60 / 1000
+}
+*/
