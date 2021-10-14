@@ -45,7 +45,7 @@ app.use(function (req, res, next) {
 //recuperation d'un record d'information cliente
 app.get('/getcollection', async function (req, res) {
   findInDb
-    .findCollection(req.dbname, req.collection, req.query)
+    .findCollection(req.query.dbname, req.query.collection, req.query.query)
     .then((result) => {
       res.send(result)
     })
@@ -54,21 +54,37 @@ app.get('/getcollection', async function (req, res) {
 //recuperation de certains enregistrement en fonction de la date
 app.get('/getEntries', async function (req, res) {
   findInDb
-    .findMultipleEntries(req.dbname, req.collection, req.query)
+    .findMultipleEntries(
+      req.query.dbname,
+      req.query.collection,
+      req.query.query
+    )
+    .then((result) => {
+      res.send(result)
+    })
+})
+//Recuperation des champs d'un Utilisateur
+app.get('/getUserCollection', async function (req, res) {
+  findInDb
+    .findUserCollection(
+      req.query.dbname,
+      req.query.collection,
+      req.query.serialNumber
+    )
     .then((result) => {
       res.send(result)
     })
 })
 
-//recuperation des informations propre a un utilisateur
-app.get('/getUserRecord', async function (req, res) {
+//recuperation des informations propre a ONT dans le temps
+app.get('/getUserRecordsInTime', async function (req, res) {
   findInDb
-    .findUserRecord(
-      req.dbname,
-      req.collection,
-      req.serialNumber,
-      req.startdate,
-      req.enddate
+    .findUserRecordsInTime(
+      req.query.dbname,
+      req.query.collection,
+      req.query.ObjectName,
+      req.query.startdate,
+      req.query.enddate
     )
     .then((result) => {
       res.send(result)
@@ -77,16 +93,17 @@ app.get('/getUserRecord', async function (req, res) {
 
 //somme d'une colonne en particulier en fonction du temps
 app.get('/getSum', async function (req, res) {
+  console.log({ request: req.query })
   findInDb
     .findSumOf(
-      req.dbname,
-      req.collection,
-      req.regular,
-      req.startdate,
-      req.enddate,
-      req.sumof
+      req.query.dbname,
+      req.query.collection,
+      req.query.regular,
+      req.query.start,
+      req.query.end
     )
     .then((result) => {
+      console.log({ resultat: result })
       res.send(result)
     })
 })
@@ -106,14 +123,32 @@ app.get('/data', async function (req, res) {
 app.get('/ont', async function (req, res) {
   console.log({ request: req.query.regular })
   query = {
-    ObjectID: { $regex: `${req.regular}` },
+    ObjectID: { $regex: `${req.query.regular}` },
   }
   findInDb
-    .findMultipleEntries(`${req.dbname}`, `${req.collection}`, query)
+    .findMultipleEntries(
+      `${req.query.dbname}`,
+      `${req.query.collection}`,
+      query
+    )
     .then((result) => {
       res.send(result)
     })
 })
 
+//Recuperation de tout les ONT associer a un OLT(query REGEX de L'OLT)
+
+app.get('/getRelatedONT', async function (req, res) {
+  console.log({ request: req.query })
+  findInDb
+    .findRelatedONT(
+      `${req.query.dbname}`,
+      `${req.query.collection}`,
+      `${req.query.query}`
+    )
+    .then((result) => {
+      res.send(result)
+    })
+})
 app.listen(3001)
 /**/
