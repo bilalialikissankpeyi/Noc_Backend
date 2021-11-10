@@ -1,6 +1,152 @@
 var MongoClient = require('mongodb').MongoClient
 var url = 'mongodb://localhost:27017/'
 
+///Query 15 minutes Data (Bridge,ONTAgg,Vlan)
+
+///Get ONT activities INTO a last interval of time
+var RequestLastData = async (dbname, collection, ObjectName, last, olt) => {
+  return new Promise((resolve, reject) => {
+    var query = {
+      $and: [
+        { ObjectID: new RegExp(ObjectName) },
+        { 'data.olt': new RegExp(olt) },
+        { 'data.timestamp': { $gte: new Date(last) } },
+      ],
+    }
+    findMultipleEntries(`${dbname}`, `${collection}`, query).then((res) => {
+      resolve(res)
+    })
+  })
+}
+
+///Get ONT activities INTO a time FRAME
+var RequestTimeFrameData = async (
+  dbname,
+  collection,
+  ObjectName,
+  startdate,
+  enddate,
+  olt
+) => {
+  return new Promise((resolve, reject) => {
+    var query = {
+      $and: [
+        { ObjectID: new RegExp(ObjectName) },
+        { 'data.olt': new RegExp(olt) },
+        {
+          'data.timestamp': {
+            $gte: new Date(startdate),
+            $lte: new Date(enddate),
+          },
+        },
+      ],
+    }
+    findMultipleEntries(`${dbname}`, `${collection}`, query).then((res) => {
+      resolve(res)
+    })
+  })
+}
+
+///RequestMultiplesCollectionData
+var MultipleCollectionRequest = async (
+  dbname,
+  collections,
+  ObjectName,
+  startdate,
+  enddate,
+  olt
+) => {
+  return new Promise((resolve, reject) => {
+    var result = []
+    if (enddate) {
+      collections.map((collection) => {
+        RequestTimeFrameData(
+          dbname,
+          collection,
+          ObjectName,
+          startdate,
+          enddate,
+          olt
+        ).then((res) => {
+          result.push({ collection: res })
+        })
+      })
+    } else {
+      collections.map((collection) => {
+        RequestLastData(dbname, collection, ObjectName, startdate, olt).then(
+          (res) => {
+            result.push({ collection: res })
+          }
+        )
+      })
+    }
+    resolve(result)
+  })
+}
+
+var listenToChanges = async () => {
+  /*var client = await MongoClient.connect('mongodb://localhost:27017/')
+  var db = client.db('mydb')
+  const collection = db.collection('Ont')
+  const pipeline = { ifAdminStatus: 'down' }
+  const changeStream = collection.watch(pipeline)
+  changeStream.on('create', function (change) {
+    console.log(change)
+  })*/
+  MongoClient.connect(url, function (err, db) {
+    if (err) throw err
+    var dbo = db.db('mydb')
+    //var query = { cle: value }
+    const collection = dbo.collection('Ont')
+
+    const pipeline = [
+      { $and: [{ ifAdminStatus: 'down' }, { operationType: 'insert' }] },
+    ]
+
+    const changeStream = collection.watch(pipeline)
+    changeStream.on('insert', function (change) {
+      console.log(change)
+    })
+  })
+
+  // start listen to changes
+}
+
+///Get All connected User Number at a time
+var RequestLastData = async (dbname, collection, ObjectName, last, olt) => {
+  return new Promise((resolve, reject) => {
+    var query = {
+      $and: [
+        { ObjectID: new RegExp(ObjectName) },
+        { 'data.olt': new RegExp(olt) },
+        { 'data.timestamp': { $gte: new Date(last) } },
+      ],
+    }
+    findMultipleEntries(`${dbname}`, `${collection}`, query).then((res) => {
+      resolve(res)
+    })
+  })
+}
+
+///Update User Informations
+
+var updateCollection = (dbname, collection, query, data) => {
+  return new Promise((resolve, reject) => {
+    MongoClient.connect(url, function (err, db) {
+      if (err) throw err
+      var dbo = db.db(`${dbname}`)
+      dbo
+        .collection(`${collection}`)
+        .updateOne(query, data, { upsert: true }, function (err, result) {
+          if (err) throw err
+          console.log('the error', err)
+          resolve(result)
+          db.close()
+        })
+    })
+  })
+}
+
 var findCollection = (dbname, collection, query) => {
   return new Promise((resolve, reject) => {
     MongoClient.connect(url, function (err, db) {
@@ -27,7 +173,7 @@ findMultipleEntries = (dbname, collection, query) => {
         .toArray(function (err, result) {
           if (err) throw err
           resolve(result)
-          console.log(result)
+          //      console.log(result)
           db.close()
         })
     })
@@ -58,7 +204,12 @@ var findSumOf = async (dbname, collection, regular, startdate, enddate) => {
 var findUserCollection = async (dbname, collection, serialNumber) => {
   return new Promise((resolve, reject) => {
     findCollection(`${dbname}`, `${collection}`, {
-      SerialNumber: serialNumber,
+      $or: [
+        { SerialNumber: new RegExp(serialNumber) },
+        { SubscriberLocationID: new RegExp(serialNumber) },
+        { DescriptionPart2: new RegExp(serialNumber) },
+        { DescriptionPart1: new RegExp(serialNumber) },
+      ],
     }).then((result) => {
       resolve(result)
     })
@@ -69,13 +220,14 @@ var findUserRecordsInTime = async (
   collection,
   ObjectName,
   startdate,
-  enddate
+  enddate,
+  olt
 ) => {
   return new Promise((resolve, reject) => {
-    var object = ObjectName.split(':')
     var query = {
       $and: [
-        { ObjectID: new RegExp(object[1]) },
+        { ObjectID: new RegExp(ObjectName) },
+        { olt: new RegExp(olt) },
         { timestamp: { $gte: new Date(startdate), $lte: new Date(enddate) } },
       ],
     }
@@ -103,7 +255,7 @@ var findRelatedONT = async (dbname, collection, query) => {
 ).then((res) => {
   console.log(res)
 })*/
-
+listenToChanges()
 module.exports = {
   findCollection,
   findMultipleEntries,
@@ -111,4 +263,11 @@ module.exports = {
   findUserCollection,
   findSumOf,
   findRelatedONT,
+  updateCollection,
 }
+/* {
+            bponOntEquipId: `${element.bponOntEquipId}`,
+            bponOntSerialNumber: `${element.bponOntSerialNumber}`,
+            bponOntSubscriberId1: `${element.bponOntSubscriberId1}`,
+            bponOntSubscriberLocId: `${element.bponOntSubscriberLocId}`,
+          },*/

@@ -9,12 +9,19 @@ const cron = require('node-cron')
 const { query } = require('express')
 const app = express()
 
+/*id = 'P180888000.C3000@R1.S1.LT4.PON9.ONT17.C14.P1'
+nom = 'MINA'
+valncheck = id.split('@')[0]
+md_vlancheck = valncheck.split('.')[1]
+trans = { vlan: md_vlancheck }
+console.log('trans', trans)*/
+
 //chaque 16 Minute (16 * * * *)
 cron.schedule('1,16,31,46 0-23 * * *', function () {
-  admin_olt.OLT.map((element) => {
+  /*admin_olt.OLT.map((element) => {
     shortcut.minuteShortcut(element)
   })
-  console.log('download each 16 minute')
+  console.log('download each 16 minute')*/
 })
 
 //chaque 1h 1 minute (1 0-23 * * *)
@@ -84,7 +91,8 @@ app.get('/getUserRecordsInTime', async function (req, res) {
       req.query.collection,
       req.query.ObjectName,
       req.query.startdate,
-      req.query.enddate
+      req.query.enddate,
+      req.query.olt
     )
     .then((result) => {
       res.send(result)
