@@ -29,7 +29,7 @@ var sendPon = (data) => {
 }
 
 var sendUni = (data) => {
-  sendToDb.pushIntoSubcollection('mydb', 'VlanPortAssociation', data)
+  sendToDb.pushIntoSubcollection('mydb', 'Uni', data)
 }
 
 var sendVlanPortAssociation = (data) => {

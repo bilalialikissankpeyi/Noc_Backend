@@ -158,5 +158,38 @@ app.get('/getRelatedONT', async function (req, res) {
       res.send(result)
     })
 })
+
+//recuperation des dernieres informations
+app.get('/getLastData', async function (req, res) {
+  findInDb
+    .RequestLastData(
+      req.query.dbname,
+      req.query.collection,
+      req.query.ObjectName,
+      req.query.last,
+      req.query.olt
+    )
+    .then((result) => {
+      res.send(result)
+    })
+})
+
+//recuperation des informations dans un interval de temp
+app.get('/getTimeFrameData', async function (req, res) {
+  console.log({ request: req.query })
+  findInDb
+    .RequestTimeFrameData(
+      req.query.dbname,
+      req.query.collection,
+      req.query.ObjectName,
+      req.query.start,
+      req.query.end,
+      req.query.olt
+    )
+    .then((result) => {
+      res.send(result)
+    })
+})
+
 app.listen(3001)
 /**/

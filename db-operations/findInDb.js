@@ -8,8 +8,8 @@ var RequestLastData = async (dbname, collection, ObjectName, last, olt) => {
   return new Promise((resolve, reject) => {
     var query = {
       $and: [
-        { ObjectID: new RegExp(ObjectName) },
-        { 'data.olt': new RegExp(olt) },
+        { ObjectID: ObjectName },
+        { 'data.olt': olt },
         { 'data.timestamp': { $gte: new Date(last) } },
       ],
     }
@@ -31,8 +31,8 @@ var RequestTimeFrameData = async (
   return new Promise((resolve, reject) => {
     var query = {
       $and: [
-        { ObjectID: new RegExp(ObjectName) },
-        { 'data.olt': new RegExp(olt) },
+        { ObjectID: ObjectName },
+        { 'data.olt': olt },
         {
           'data.timestamp': {
             $gte: new Date(startdate),
@@ -42,6 +42,7 @@ var RequestTimeFrameData = async (
       ],
     }
     findMultipleEntries(`${dbname}`, `${collection}`, query).then((res) => {
+      console.log(res)
       resolve(res)
     })
   })
@@ -58,29 +59,41 @@ var MultipleCollectionRequest = async (
 ) => {
   return new Promise((resolve, reject) => {
     var result = []
-    if (enddate) {
-      collections.map((collection) => {
-        RequestTimeFrameData(
+    console.log('is different')
+    collections.map((collection, i) => {
+      RequestTimeFrameData(
+        dbname,
+        collection,
+        ObjectName,
+        startdate,
+        enddate,
+        olt
+      ).then((res) => {
+        result.push({ result: res, collection: `${collection}` })
+        console.log(`${collection}`, res)
+        if (i === collections.length - 1) {
+          resolve(result)
+        }
+      })
+    })
+    /*if (!enddate) {
+      collections.map(async (collection, i) => {
+        await RequestLastData(
           dbname,
           collection,
           ObjectName,
           startdate,
-          enddate,
           olt
         ).then((res) => {
-          result.push({ collection: res })
+          result.push({ result: res, collection: `${collection}` })
+          if (i === collections.length - 1) {
+            resolve(result)
+          }
         })
       })
     } else {
-      collections.map((collection) => {
-        RequestLastData(dbname, collection, ObjectName, startdate, olt).then(
-          (res) => {
-            result.push({ collection: res })
-          }
-        )
-      })
-    }
-    resolve(result)
+      
+    }*/
   })
 }
 
@@ -162,7 +175,7 @@ var findCollection = (dbname, collection, query) => {
     })
   })
 }
-findMultipleEntries = (dbname, collection, query) => {
+var findMultipleEntries = async (dbname, collection, query) => {
   return new Promise((resolve, reject) => {
     MongoClient.connect(url, function (err, db) {
       if (err) throw err
@@ -255,9 +268,44 @@ var findRelatedONT = async (dbname, collection, query) => {
 ).then((res) => {
   console.log(res)
 })*/
-listenToChanges()
+/*var executeMe = async () => {
+  var result = await MultipleCollectionRequest(
+    'mydb',
+    ['VlanPortAssociation', 'OntVeipPort', 'ISAM_ONT', 'OntEthPort'],
+    'MINA-7360FX8:R1.S1.LT8.PON7.ONT6',
+    new Date('2021-11-15T22:00:00.885Z'),
+    new Date('2021-11-15T22:30:00.885Z'),
+    'MINA-7360FX8'
+  )
+  console.log({ result: result })
+}
+executeMe()
+*/ /*
+RequestLastData(
+  'mydb',
+  'ISAM_ONT',
+  'MINA-7360FX8',
+  new Date('2021-11-15T22:00:00.885Z'),
+  'MINA-7360FX8'
+).then((res) => {
+  console.log({ res: res[0].data })
+})
+//new Date('Mon, 15 Nov 2021 22:01:00 GMT')
+listenToChanges()*/
+
+RequestTimeFrameData(
+  'mydb',
+  'BridgePort',
+  'ADIDO-7360-FX8:R1.S1.LT4.PON1.ONT32',
+  new Date('2021-10-14T07:17:00.885Z'),
+  new Date('2021-10-14T07:32:00.885Z'),
+  'ADIDO-7360-FX8'
+)
 module.exports = {
   findCollection,
+  RequestLastData,
+  RequestTimeFrameData,
+  MultipleCollectionRequest,
   findMultipleEntries,
   findUserRecordsInTime,
   findUserCollection,
