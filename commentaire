@@ -177,3 +177,84 @@ function toDays(d) {
   return d / 24 / 60 / 60 / 1000
 }
 */
+
+181
+var RequestTimeFrameData = async (
+  dbname,
+  collection,
+  ObjectName,
+  startdate,
+  enddate,
+  olt
+) => {
+  var final_collection
+  switch (collection) {
+    case 'BridgePort':
+      final_collection = BridgePort
+      break
+    case 'ONTAggGem':
+      final_collection = OntAggGem
+      break
+    case 'vlanPort':
+      final_collection = vlanPort
+      break
+    case 'CpuUsage':
+      final_collection = CpuUsage
+      break
+    case 'EthernetPort':
+      final_collection = EthernetPort
+      break
+    case 'ISAM_ONT':
+      final_collection = Ont
+      break
+    case 'OntEthPort':
+      final_collection = OntEthPort
+      break
+    case 'OntVeipPort':
+      final_collection = OntVeipPort
+      break
+    case 'Pon':
+      final_collection = Pon
+      break
+    case 'Uni':
+      final_collection = Uni
+      break
+    case 'VlanPortAssociation':
+      final_collection = VlanPortAssociation
+      break
+    default:
+  }
+  return new Promise((resolve, reject) => {
+    mongoose
+      .connect(url)
+      .then(() => {
+        console.log('here')
+        final_collection
+          .aggregate([
+            { $match: { ObjectID: ObjectName } },
+            {
+              $project: {
+                ObjectID: 1,
+                data: {
+                  $filter: {
+                    input: '$data',
+                    as: 'index',
+                    cond: {
+                      $and: [
+                        { $gte: ['$$index.timestamp', startdate] },
+                        { $lte: ['$$index.timestamp', enddate] },
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+          ])
+          .then((result) => {
+            console.log(result[0].data)
+            resolve(result)
+          })
+      })
+      .catch(console.log)
+  })
+}
