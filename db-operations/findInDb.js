@@ -1,25 +1,169 @@
 var MongoClient = require('mongodb').MongoClient
-var url = 'mongodb://localhost:27017/'
+const mongoose = require('mongoose')
+const models = require('./models')
+var url = 'mongodb://localhost:27017/mydb'
+const { model, Schema } = mongoose
 
+const CpuUsage = model('CpuUsage', models.CpuUsageschema, 'CpuUsage')
+const BridgePort = model('BridgePort', models.BridgePortschema, 'BridgePort')
+const OntAggGem = model('ONTAggGem', models.OntAggGemschema, 'ONTAggGem')
+const vlanPort = model('vlanPort', models.vlanPortschema, 'vlanPort')
+const EthernetPort = model(
+  'EthernetPort',
+  models.EthernetPortschema,
+  'EthernetPort'
+)
+const OntEthPort = model('OntEthPort', models.OntEthPortschema, 'OntEthPort')
+const Ont = model('Ontschema', models.Ontschema, 'ISAM_ONT')
+const OntVeipPort = model(
+  'OntVeipPort',
+  models.OntVeipPortschema,
+  'OntVeipPort'
+)
+const Pon = model('Pon', models.Ponschema, 'Pon')
+const Uni = model('Uni', models.Unischema, 'Uni')
+const VlanPortAssociation = model(
+  'VlanPortAssociation',
+  models.VlanPortAssociationschema,
+  'VlanPortAssociation'
+)
+
+//
+var DashBoardLastData = async (collection, last) => {
+  var final_collection
+  switch (collection) {
+    case 'BridgePort':
+      final_collection = BridgePort
+      break
+    case 'ONTAggGem':
+      final_collection = OntAggGem
+      break
+    case 'vlanPort':
+      final_collection = vlanPort
+      break
+    case 'CpuUsage':
+      final_collection = CpuUsage
+      break
+    case 'EthernetPort':
+      final_collection = EthernetPort
+      break
+    case 'ISAM_ONT':
+      final_collection = Ont
+      break
+    case 'OntEthPort':
+      final_collection = OntEthPort
+      break
+    case 'OntVeipPort':
+      final_collection = OntVeipPort
+      break
+    case 'Pon':
+      final_collection = Pon
+      break
+    case 'Uni':
+      final_collection = Uni
+      break
+    case 'VlanPortAssociation':
+      final_collection = VlanPortAssociation
+      break
+    default:
+  }
+  return new Promise((resolve, reject) => {
+    console.log('haha')
+    mongoose
+      .connect(url)
+      .then(() => {
+        console.log('here')
+        final_collection
+          .find()
+          .select({
+            ObjectID: 1,
+            data: { $elemMatch: { timestamp: { $gte: new Date(last) } } },
+          })
+          .then((result) => {
+            console.log(result[0].data.length)
+            resolve(result)
+          })
+          .catch(console.log)
+      })
+      .catch(console.log)
+  })
+}
+
+//
 ///Query 15 minutes Data (Bridge,ONTAgg,Vlan)
 
 ///Get ONT activities INTO a last interval of time
 var RequestLastData = async (dbname, collection, ObjectName, last, olt) => {
+  var final_collection
+  switch (collection) {
+    case 'BridgePort':
+      final_collection = BridgePort
+      break
+    case 'ONTAggGem':
+      final_collection = OntAggGem
+      break
+    case 'vlanPort':
+      final_collection = vlanPort
+      break
+    case 'CpuUsage':
+      final_collection = CpuUsage
+      break
+    case 'EthernetPort':
+      final_collection = EthernetPort
+      break
+    case 'ISAM_ONT':
+      final_collection = Ont
+      break
+    case 'OntEthPort':
+      final_collection = OntEthPort
+      break
+    case 'OntVeipPort':
+      final_collection = OntVeipPort
+      break
+    case 'Pon':
+      final_collection = Pon
+      break
+    case 'Uni':
+      final_collection = Uni
+      break
+    case 'VlanPortAssociation':
+      final_collection = VlanPortAssociation
+      break
+    default:
+  }
   return new Promise((resolve, reject) => {
-    var query = {
-      $and: [
-        { ObjectID: ObjectName },
-        { 'data.olt': olt },
-        { 'data.timestamp': { $gte: new Date(last) } },
-      ],
-    }
-    findMultipleEntries(`${dbname}`, `${collection}`, query).then((res) => {
-      resolve(res)
-    })
+    console.log('haha')
+    mongoose
+      .connect(url)
+      .then(() => {
+        console.log('here')
+        final_collection
+          .find({ $regex: { ObjectID: ObjectName } })
+          .select({
+            ObjectID: 1,
+            data: { $elemMatch: { olt, timestamp: { $gte: new Date(last) } } },
+          })
+          .then((result) => {
+            console.log(result[0].data.length)
+            resolve(result)
+          })
+          .catch(console.log)
+      })
+      .catch(console.log)
   })
 }
-
+/*
+var last = new Date('13 December 2021 06:00 UTC')
+console.log(last.toISOString())
+RequestLastData(
+  'mydb',
+  'CpuUsage',
+  'MINA-7360FX8:',
+  new Date(last.toISOString()),
+  'MINA-7360FX8'
+)*/
 ///Get ONT activities INTO a time FRAME
+
 var RequestTimeFrameData = async (
   dbname,
   collection,
@@ -28,121 +172,102 @@ var RequestTimeFrameData = async (
   enddate,
   olt
 ) => {
+  console.log(collection)
+  var final_collection
+  var d1s = new Date(startdate)
+  var d2s = new Date(enddate)
+  var end = new Date(d2s.toISOString())
+  var start = new Date(d1s.toISOString())
+  switch (collection) {
+    case 'BridgePort':
+      final_collection = BridgePort
+      break
+    case 'ONTAggGem':
+      final_collection = OntAggGem
+      break
+    case 'vlanPort':
+      final_collection = vlanPort
+      break
+    case 'CpuUsage':
+      final_collection = CpuUsage
+      break
+    case 'EthernetPort':
+      final_collection = EthernetPort
+      break
+    case 'ISAM_ONT':
+      final_collection = Ont
+      break
+    case 'OntEthPort':
+      final_collection = OntEthPort
+      break
+    case 'OntVeipPort':
+      final_collection = OntVeipPort
+      break
+    case 'Pon':
+      final_collection = Pon
+      break
+    case 'Uni':
+      final_collection = Uni
+      break
+    case 'VlanPortAssociation':
+      final_collection = VlanPortAssociation
+      break
+    default:
+  }
   return new Promise((resolve, reject) => {
-    var query = {
-      $and: [
-        { ObjectID: ObjectName },
-        { 'data.olt': olt },
-        {
-          'data.timestamp': {
-            $gte: new Date(startdate),
-            $lte: new Date(enddate),
-          },
-        },
-      ],
-    }
-    findMultipleEntries(`${dbname}`, `${collection}`, query).then((res) => {
-      console.log(res)
-      resolve(res)
-    })
-  })
-}
-
-///RequestMultiplesCollectionData
-var MultipleCollectionRequest = async (
-  dbname,
-  collections,
-  ObjectName,
-  startdate,
-  enddate,
-  olt
-) => {
-  return new Promise((resolve, reject) => {
-    var result = []
-    console.log('is different')
-    collections.map((collection, i) => {
-      RequestTimeFrameData(
-        dbname,
-        collection,
-        ObjectName,
-        startdate,
-        enddate,
-        olt
-      ).then((res) => {
-        result.push({ result: res, collection: `${collection}` })
-        console.log(`${collection}`, res)
-        if (i === collections.length - 1) {
-          resolve(result)
-        }
-      })
-    })
-    /*if (!enddate) {
-      collections.map(async (collection, i) => {
-        await RequestLastData(
-          dbname,
-          collection,
-          ObjectName,
-          startdate,
-          olt
-        ).then((res) => {
-          result.push({ result: res, collection: `${collection}` })
-          if (i === collections.length - 1) {
+    mongoose
+      .connect(url)
+      .then(() => {
+        console.log(final_collection)
+        final_collection
+          .aggregate([
+            { $match: { ObjectID: ObjectName } },
+            {
+              $project: {
+                ObjectID: 1,
+                data: {
+                  $filter: {
+                    input: '$data',
+                    as: 'index',
+                    cond: {
+                      $and: [
+                        {
+                          $gte: ['$$index.timestamp', start],
+                        },
+                        {
+                          $lte: ['$$index.timestamp', end],
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+          ])
+          .then((result) => {
+            //console.log(result[0].data)
             resolve(result)
-          }
-        })
+          })
       })
-    } else {
-      
-    }*/
+      .catch(console.log)
   })
 }
+/*
+start = new Date('13 December 2021 01:00 UTC')
+end = new Date('13 December 2021 02:02: UTC')*/
 
-var listenToChanges = async () => {
-  /*var client = await MongoClient.connect('mongodb://localhost:27017/')
-  var db = client.db('mydb')
-  const collection = db.collection('Ont')
-  const pipeline = { ifAdminStatus: 'down' }
-  const changeStream = collection.watch(pipeline)
-  changeStream.on('create', function (change) {
-    console.log(change)
-  })*/
-  MongoClient.connect(url, function (err, db) {
-    if (err) throw err
-    var dbo = db.db('mydb')
-    //var query = { cle: value }
-    const collection = dbo.collection('Ont')
-
-    const pipeline = [
-      { $and: [{ ifAdminStatus: 'down' }, { operationType: 'insert' }] },
-    ]
-
-    const changeStream = collection.watch(pipeline)
-    changeStream.on('insert', function (change) {
-      console.log(change)
-    })
-  })
-
-  // start listen to changes
-}
-
-///Get All connected User Number at a time
-var RequestLastData = async (dbname, collection, ObjectName, last, olt) => {
-  return new Promise((resolve, reject) => {
-    var query = {
-      $and: [
-        { ObjectID: new RegExp(ObjectName) },
-        { 'data.olt': new RegExp(olt) },
-        { 'data.timestamp': { $gte: new Date(last) } },
-      ],
-    }
-    findMultipleEntries(`${dbname}`, `${collection}`, query).then((res) => {
-      resolve(res)
-    })
-  })
-}
-
+//console.log(start.toISOString())
+/*RequestTimeFrameData(
+  'mydb',
+  'OntEthPort',
+  'MINA-7360FX8:R1.S1.LT8.PON2.ONT32',
+  new Date(start.toISOString()),
+  new Date(end.toISOString()),
+  'MINA-7360FX8'
+)*/
+/*new Date('2021-12-13T01:01:00.499+00:00'),
+  new Date('2021-12-13T02:01:00.023+00:00'),*/
 ///Update User Informations
-
 var updateCollection = (dbname, collection, query, data) => {
   return new Promise((resolve, reject) => {
     MongoClient.connect(url, function (err, db) {
@@ -176,17 +301,19 @@ var findCollection = (dbname, collection, query) => {
   })
 }
 var findMultipleEntries = async (dbname, collection, query) => {
+  console.log('lolll')
   return new Promise((resolve, reject) => {
-    MongoClient.connect(url, function (err, db) {
+    MongoClient.connect('mongodb://localhost:27017/', function (err, db) {
       if (err) throw err
-      var dbo = db.db(`${dbname}`)
+      var dbo = db.db('mydb')
       dbo
         .collection(`${collection}`)
         .find(query)
         .toArray(function (err, result) {
           if (err) throw err
+          console.log('le resultat', result.length)
           resolve(result)
-          //      console.log(result)
+
           db.close()
         })
     })
@@ -258,64 +385,16 @@ var findRelatedONT = async (dbname, collection, query) => {
     })
   })
 }
-/*findUserRecord()*/
-/*findSumOf(
-  'mydb',
-  'ONTAggGem',
-  'R1.S1.LT8.PON15.ONT44',
-  new Date('2021-10-14T06:30:00.885Z'),
-  new Date('2021-10-14T08:00:00.885Z')
-).then((res) => {
-  console.log(res)
-})*/
-/*var executeMe = async () => {
-  var result = await MultipleCollectionRequest(
-    'mydb',
-    ['VlanPortAssociation', 'OntVeipPort', 'ISAM_ONT', 'OntEthPort'],
-    'MINA-7360FX8:R1.S1.LT8.PON7.ONT6',
-    new Date('2021-11-15T22:00:00.885Z'),
-    new Date('2021-11-15T22:30:00.885Z'),
-    'MINA-7360FX8'
-  )
-  console.log({ result: result })
-}
-executeMe()
-*/ /*
-RequestLastData(
-  'mydb',
-  'ISAM_ONT',
-  'MINA-7360FX8',
-  new Date('2021-11-15T22:00:00.885Z'),
-  'MINA-7360FX8'
-).then((res) => {
-  console.log({ res: res[0].data })
-})
-//new Date('Mon, 15 Nov 2021 22:01:00 GMT')
-listenToChanges()*/
 
-RequestTimeFrameData(
-  'mydb',
-  'BridgePort',
-  'ADIDO-7360-FX8:R1.S1.LT4.PON1.ONT32',
-  new Date('2021-10-14T07:17:00.885Z'),
-  new Date('2021-10-14T07:32:00.885Z'),
-  'ADIDO-7360-FX8'
-)
 module.exports = {
   findCollection,
   RequestLastData,
   RequestTimeFrameData,
-  MultipleCollectionRequest,
   findMultipleEntries,
   findUserRecordsInTime,
   findUserCollection,
   findSumOf,
   findRelatedONT,
   updateCollection,
+  DashBoardLastData,
 }
-/* {
-            bponOntEquipId: `${element.bponOntEquipId}`,
-            bponOntSerialNumber: `${element.bponOntSerialNumber}`,
-            bponOntSubscriberId1: `${element.bponOntSubscriberId1}`,
-            bponOntSubscriberLocId: `${element.bponOntSubscriberLocId}`,
-          },*/

@@ -28,7 +28,7 @@
     "jdbc": "^0.7.6",
     "jshs2": "^0.4.4",
     "mongodb": "^4.1.2",
-    "mongoose": "^6.0.7",
+    "mongoose": "^6.0.13",
     "node-cron": "^3.0.0",
     "node-hive": "^0.1.1",
     "node-thrift-hbase": "^0.12.1",

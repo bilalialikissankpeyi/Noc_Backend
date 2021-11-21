@@ -1,4 +1,5 @@
 module.exports.data = [
+  //1
   {
     extendPortTotalPrevious15MinDnDiscByteCounter: 'Down Discard Byte',
     extendPortTotalPrevious15MinDnDiscFrameCounter: 'Down Discard Frame',
@@ -10,12 +11,14 @@ module.exports.data = [
     extendPortTotalPrevious15MinUpFwdByteCounter: 'Up Foward Byte',
     extendPortTotalPrevious15MinUpFwdFrameCounter: 'Up Foward Frame',
   },
+  //2
   {
     gponOntOntsideAggGemIntervalReceiveBlocksCounter64: 'Recieve Blocks',
     gponOntOntsideAggGemIntervalReceiveFrags: 'Receive Frags',
     gponOntOntsideAggGemIntervalTransmitBlocksCounter64: 'Transmit Blocks',
     gponOntOntsideAggGemIntervalTransmitFrags: 'Transmit Frags',
   },
+  //3
   {
     extendPortVlanPrevious15MinDnDiscByteCounter: 'Down Discard Byte',
     extendPortVlanPrevious15MinDnDiscFrameCounter: 'Down Discard Frame',
@@ -26,40 +29,26 @@ module.exports.data = [
     extendPortVlanPrevious15MinUpFwdByteCounter: 'Up Foward Byte',
     extendPortVlanPrevious15MinUpFwdFrameCounter: 'Up Foward Frame',
   },
+  //4
   {
-    extendPortVlanCurrent1DayDnDiscByteCounter: 'Down Discard Byte',
-    extendPortVlanCurrent1DayDnFwdByteCounter: 'Down Foward Byte',
-    extendPortVlanCurrent1DayUpDiscByteCounter: 'Up Discard Byte',
-    extendPortVlanCurrent1DayUpFwdByteCounter: 'Up Foward Byte',
+    ifHCInOctets: 'interface HC Ingress Octetes',
+    ifHCOutOctets: 'interface HC Outgress Octetes',
+    ifInDiscards: 'interface ingress Discards',
+    ifOutDiscards: 'interface outgress Discards',
+    ' tmnxPortAdminStatus': 'tmnx Port Admin Status',
+    tmnxPortEtherOperSpeed: 'tmnx Port Ether operat Status',
+    tmnxPortEtherSpeed: 'tmnx Port Ether Speed',
+    tmnxPortLinkStatus: 'tmnx Port Link Status',
+    tmnxPortOperStatus: 'tmnx Port operat Status',
   },
+  //5
   {
-    extendPortTotalDnDiscByteCounter: 'Down Discard Byte',
-    extendPortTotalDnFwdByteCounter: 'Down Foward Byte',
-    extendPortTotalUpDiscByteCounter: 'Up Discard Byte',
-    extendPortTotalUpFwdByteCounter: 'Up Foward Byte',
-    ifOperStatus: 'interface Operation Status',
+    memAbsoluteUsage: 'memory Absolute Usage',
+    operateStatus: 'operation Status',
+    startMonitorTime: 'start Monitor Time',
+    totalMemSize: 'total memory size',
   },
-  {
-    ifAdminStatus: 'interface Administration Status',
-    ifOperStatus: 'interface Operation Status',
-  },
-  {
-    ifAdminStatus: 'interface Administration Status',
-    ifOperStatus: 'interface Operation Status',
-  },
-  {
-    asamIfExtCustomerId: 'Ext Customer ID',
-    ifAdminStatus: 'interface Administration Status',
-    ifOperStatus: 'interface Operation Status',
-  },
-  {
-    bponOntEquipId: 'Equipment ID',
-    bponOntSerialNumber: 'Serial Number',
-    bponOntSubscriberId1: 'Suscriber ID1',
-    bponOntSubscriberLocId: 'Suscriber Location ID',
-    ifAdminStatus: 'interface Administration Status',
-    ifOperStatus: 'interface Operation Status',
-  },
+  //6
   {
     extendEtherPortStatisticsIfInDiscards: 'interface Ingress Discards',
     extendEtherPortStatisticsIfInNUcastPkts: 'interface NU cast Packets',
@@ -72,23 +61,47 @@ module.exports.data = [
     ifHighSpeed: 'interface High Speed',
     ifOperStatus: 'interface Operation Status',
   },
+  //7
   {
-    memAbsoluteUsage: 'memory Absolute Usage',
-    operateStatus: 'operation Status',
-    startMonitorTime: 'start Monitor Time',
-    totalMemSize: 'total memory size',
+    bponOntEquipId: 'Equipment ID',
+    bponOntSerialNumber: 'Serial Number',
+    bponOntSubscriberId1: 'Suscriber ID1',
+    bponOntSubscriberLocId: 'Suscriber Location ID',
+    ifAdminStatus: 'interface Administration Status',
+    ifOperStatus: 'interface Operation Status',
   },
+  //8
   {
-    ifHCInOctets: 'interface HC Ingress Octetes',
-    ifHCOutOctets: 'interface HC Outgress Octetes',
-    ifInDiscards: 'interface ingress Discards',
-    ifOutDiscards: 'interface outgress Discards',
-    ' tmnxPortAdminStatus': 'tmnx Port Admin Status',
-    tmnxPortEtherOperSpeed: 'tmnx Port Ether operat Status',
-    tmnxPortEtherSpeed: 'tmnx Port Ether Speed',
-    tmnxPortLinkStatus: 'tmnx Port Link Status',
-    tmnxPortOperStatus: 'tmnx Port operat Status',
+    asamIfExtCustomerId: 'Ext Customer ID',
+    ifAdminStatus: 'interface Administration Status',
+    ifOperStatus: 'interface Operation Status',
   },
+  //9
+  {
+    ifAdminStatus: 'interface Administration Status',
+    ifOperStatus: 'interface Operation Status',
+  },
+  //10
+  {
+    ifAdminStatus: 'interface Administration Status',
+    ifOperStatus: 'interface Operation Status',
+  },
+  //11
+  {
+    extendPortTotalDnDiscByteCounter: 'Down Discard Byte',
+    extendPortTotalDnFwdByteCounter: 'Down Foward Byte',
+    extendPortTotalUpDiscByteCounter: 'Up Discard Byte',
+    extendPortTotalUpFwdByteCounter: 'Up Foward Byte',
+    ifOperStatus: 'interface Operation Status',
+  },
+  //11
+  {
+    extendPortVlanCurrent1DayDnDiscByteCounter: 'Down Discard Byte',
+    extendPortVlanCurrent1DayDnFwdByteCounter: 'Down Foward Byte',
+    extendPortVlanCurrent1DayUpDiscByteCounter: 'Up Discard Byte',
+    extendPortVlanCurrent1DayUpFwdByteCounter: 'Up Foward Byte',
+  },
+  //12
   {
     extendPortVlanCurrent1DayDnDiscByteCounter: 'Down Discard Byte',
     extendPortVlanCurrent1DayDnFwdByteCounter: 'Down Foward Byte',

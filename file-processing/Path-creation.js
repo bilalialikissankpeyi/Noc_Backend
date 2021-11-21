@@ -7,7 +7,7 @@ var addZero = (value) => {
 }
 var createMinutePath = (OltID) => {
   lastfifteen = new Date()
-  console.log('lastfif before', lastfifteen.getMonth())
+  console.log('lastfif before', lastfifteen.getUTCMonth())
   if (lastfifteen.getMinutes() === 1) {
     lastfifteen.setMinutes(0)
     lastfifteen.setMonth(lastfifteen.getMonth() + 1)
@@ -19,7 +19,7 @@ var createMinutePath = (OltID) => {
   return {
     path:
       OltID +
-      'H-15M_15M_' +
+      '_H-15M_15M_' +
       addZero(lastfifteen.getFullYear()) +
       '-' +
       addZero(lastfifteen.getMonth()) +
@@ -36,6 +36,7 @@ var createMinutePath = (OltID) => {
 
 var createHourPath = (OltID) => {
   lastHour = new Date()
+  lastHour.setMonth(lastHour.getMonth() + 1)
   return {
     path:
       OltID +
@@ -54,7 +55,9 @@ var createHourPath = (OltID) => {
 
 var createDailyPath = (OltID) => {
   lastDay = new Date()
+
   lasDay.setDate(lasDay.getDate() - 1)
+  lastDay.setMonth(lastDay.getMonth() + 1)
   return {
     path:
       OltID +

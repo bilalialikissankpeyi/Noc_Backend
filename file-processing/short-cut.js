@@ -179,82 +179,82 @@ var hourShortcut = (element) => {
       var csvdata = DF.fromCSV(ont)
       var csv2data = DF.fromCSV(ethOnt)
 
+      root.map((path, index) => {
+        newindex = index + 3
+        manipulatedata(path, value.time, element.ObjectName, newindex).then(
+          (transformed) => {
+            if (transformed.length !== 0) {
+              var data_todb = []
+              transformed.map((trans) => {
+                switch (index) {
+                  case 0:
+                    trans = add_attrib(trans, element)
+                    break
+                  case 1:
+                    trans = add_attrib(trans, element)
+                    break
+                  case 2:
+                    trans = add_attrib(trans, element)
+                    break
+                  case 3:
+                    delete trans['Equipment ID']
+                    delete trans['Serial Number']
+                    delete trans['Suscriber ID1']
+                    delete trans['Suscriber Location ID']
+                    trans = {
+                      ...trans,
+                      ObjectName: (id =
+                        element.ObjectName + ':' + trans.ObjectID),
+                    }
+                    break
+                  case 4:
+                    delete trans['Ext Customer ID']
+                    var type = 'C1.P' + trans.ObjectID.slice(-1)
+                    var removed = trans.ObjectID.replace(
+                      trans.ObjectID.split('.')[6],
+                      ''
+                    )
+                      .replace(trans.ObjectID.split('.')[5], '')
+                      .replace('..', '')
+                    id = element.ObjectName + ':' + removed
+                    trans = {
+                      ...trans,
+                      type: type,
+                      ObjectName: id,
+                    }
+                    break
+                  case 5:
+                    //veip
+                    trans = transformVeipPort(trans, element)
+                    break
+                  case 6:
+                    trans = add_attrib(trans, element)
+                    break
+                  case 7:
+                    //uni
+                    trans = transformVeipPort(trans, element)
+                    break
+                  case 8:
+                    trans = transformVlan(trans, element)
+                    break
+                  default:
+                }
+                data_todb.push(trans)
+              })
+              send_hours_files.addTotheCollection(data_todb, index)
+            }
+          }
+        )
+        fs.unlink(path, (err) => {})
+      })
       ////End
-      findInDb
+      /*findInDb
         .findRelatedONT('mydb', 'ONT_INFO', element.ObjectName)
         .then((onts) => {
           /* if (csvdata.toArray().length > onts.length) {
             sendToDb.addUserToDb(csvdata.toArray(), csv2data.toArray(), onts)
-          }*/
-          root.map((path, index) => {
-            newindex = index + 3
-            manipulatedata(path, value.time, element.ObjectName, newindex).then(
-              (transformed) => {
-                if (transformed.length !== 0) {
-                  var data_todb = []
-                  transformed.map((trans) => {
-                    switch (index) {
-                      case 0:
-                        trans = add_attrib(trans, element)
-                        break
-                      case 1:
-                        trans = add_attrib(trans, element)
-                        break
-                      case 2:
-                        trans = add_attrib(trans, element)
-                        break
-                      case 3:
-                        delete trans['Equipment ID']
-                        delete trans['Serial Number']
-                        delete trans['Suscriber ID1']
-                        delete trans['Suscriber Location ID']
-                        trans = {
-                          ...trans,
-                          ObjectName: (id =
-                            element.ObjectName + ':' + trans.ObjectID),
-                        }
-                        break
-                      case 4:
-                        delete trans['Ext Customer ID']
-                        var type = 'C1.P' + trans.ObjectID.slice(-1)
-                        var removed = trans.ObjectID.replace(
-                          trans.ObjectID.split('.')[6],
-                          ''
-                        )
-                          .replace(trans.ObjectID.split('.')[5], '')
-                          .replace('..', '')
-                        id = element.ObjectName + ':' + removed
-                        trans = {
-                          ...trans,
-                          type: type,
-                          ObjectName: id,
-                        }
-                        break
-                      case 5:
-                        //veip
-                        trans = transformVeipPort(trans, element)
-                        break
-                      case 6:
-                        trans = add_attrib(trans, element)
-                        break
-                      case 7:
-                        //uni
-                        trans = transformVeipPort(trans, element)
-                        break
-                      case 8:
-                        trans = transformVlan(trans, element)
-                        break
-                      default:
-                    }
-                    data_todb.push(trans)
-                  })
-                  send_hours_files.addTotheCollection(data_todb, index)
-                }
-              }
-            )
-            fs.unlink(path, (err) => {})
-          })
-        })
+          }
+        })*/
     })
   })
 }

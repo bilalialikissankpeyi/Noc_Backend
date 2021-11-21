@@ -15,19 +15,21 @@ valncheck = id.split('@')[0]
 md_vlancheck = valncheck.split('.')[1]
 trans = { vlan: md_vlancheck }
 console.log('trans', trans)*/
-
+/*
 //chaque 16 Minute (16 * * * *)
 cron.schedule('1,16,31,46 0-23 * * *', function () {
-  /*admin_olt.OLT.map((element) => {
+  admin_olt.OLT.map((element) => {
     shortcut.minuteShortcut(element)
   })
-  console.log('download each 16 minute')*/
-})
+  console.log('download each 16 minute')
+})*/
 
 //chaque 1h 1 minute (1 0-23 * * *)
 cron.schedule('1 0-23 * * *', function () {
   admin_olt.OLT.map((element) => {
-    shortcut.hourShortcut(element)
+    shortcut.hourShortcut(element).then(() => {
+      console.log('end')
+    })
   })
   console.log('download each hour past 1 minute')
 })
@@ -143,6 +145,26 @@ app.get('/ont', async function (req, res) {
       res.send(result)
     })
 })
+//Nombre d'equipement dans une table
+app.get('/getLength', async function (req, res) {
+  console.log({ request: req.query })
+  findInDb
+    .findMultipleEntries('', `${req.query.collection}`, '')
+    .then((result) => {
+      console.log('resultat', result.length)
+      res.send(result.length.toString())
+    })
+})
+
+//DashBoard Last Data
+app.get('/getDashBoardLastData', async function (req, res) {
+  findInDb
+    .DashBoardLastData(req.query.collection, req.query.last)
+    .then((result) => {
+      console.log('resulting', result.length)
+      res.send(result)
+    })
+})
 
 //Recuperation de tout les ONT associer a un OLT(query REGEX de L'OLT)
 
@@ -170,6 +192,7 @@ app.get('/getLastData', async function (req, res) {
       req.query.olt
     )
     .then((result) => {
+      console.log('resulting', result.length)
       res.send(result)
     })
 })
@@ -187,6 +210,7 @@ app.get('/getTimeFrameData', async function (req, res) {
       req.query.olt
     )
     .then((result) => {
+      console.log('result', result)
       res.send(result)
     })
 })

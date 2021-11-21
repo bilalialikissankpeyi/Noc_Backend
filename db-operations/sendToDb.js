@@ -22,7 +22,7 @@ var pushIntoSubcollection = (dbname, collection, array) => {
   return new Promise((resolve, reject) => {
     MongoClient.connect(url, function (err, db) {
       if (err) throw err
-      console.log('sthg')
+      //console.log('sthg')
       var dbo = db.db(dbname)
       array.map((data, i) => {
         var ObjectName = data.ObjectName
@@ -40,7 +40,7 @@ var pushIntoSubcollection = (dbname, collection, array) => {
           .collection(collection)
           .updateOne(query, newvalue, { upsert: true }, function (err, res) {
             if (err) throw err
-            console.log('added', res)
+            //console.log('added', res)
             if (i === data.length - 1) {
               db.close()
             }
