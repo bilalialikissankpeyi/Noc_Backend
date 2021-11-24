@@ -15,20 +15,23 @@ valncheck = id.split('@')[0]
 md_vlancheck = valncheck.split('.')[1]
 trans = { vlan: md_vlancheck }
 console.log('trans', trans)*/
-/*
+
 //chaque 16 Minute (16 * * * *)
 cron.schedule('1,16,31,46 0-23 * * *', function () {
   admin_olt.OLT.map((element) => {
-    shortcut.minuteShortcut(element)
+    shortcut.minuteShortcut(element).then((res) => {
+      console.log('endFor Minute', res)
+    })
   })
   console.log('download each 16 minute')
-})*/
+})
 
 //chaque 1h 1 minute (1 0-23 * * *)
 cron.schedule('1 0-23 * * *', function () {
+  console.log('end')
   admin_olt.OLT.map((element) => {
-    shortcut.hourShortcut(element).then(() => {
-      console.log('end')
+    shortcut.hourShortcut(element).then((res) => {
+      console.log('endFor hours', res)
     })
   })
   console.log('download each hour past 1 minute')
@@ -36,8 +39,11 @@ cron.schedule('1 0-23 * * *', function () {
 
 //chaque Jour a 0 H 1 min du 1 au 31 (1 0 1-31 * *)
 cron.schedule('1 0 1-31 * *', function () {
+  console.log('end')
   admin_olt.OLT.map((element) => {
-    shortcut.dayShortcut(element)
+    shortcut.dayShortcut(element).then((res) => {
+      console.log('endFor Day', res)
+    })
   })
   console.log('download each day at 0 AM past 1 minute')
 })
