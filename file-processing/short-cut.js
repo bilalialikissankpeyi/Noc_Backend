@@ -14,17 +14,19 @@ const sendToDb = require('../db-operations/sendToDb')
 
 const manipulatedata = (path, time, objectName, index) => {
   return new Promise((resolve, reject) => {
-    const text = fs.readFileSync(path, 'utf-8')
-    var csvdata = DF.fromCSV(text)
+    var modified = []
+    if (fs.existsSync(path)) {
+      const text = fs.readFileSync(path, 'utf-8')
+      var csvdata = DF.fromCSV(text)
+      var renamed = csvdata.renameSeries(data.data[index])
 
-    var renamed = csvdata.renameSeries(data.data[index])
-
-    var modified = renamed.generateSeries({
-      timestamp: (row) => time,
-      olt: (row) => objectName,
-    })
-    //console.log('New csvfile', modified.toArray()[0])
-    resolve(modified.toArray())
+      modified = renamed.generateSeries({
+        timestamp: (row) => time,
+        olt: (row) => objectName,
+      })
+      //console.log('New csvfile', modified.toArray()[0])
+      resolve(modified.toArray())
+    }
   })
 }
 
@@ -127,7 +129,9 @@ var minuteShortcut = (element) => {
                     })
                   }
                   //supression du fichier unitaire
-                  fs.unlink(path, (err) => {})
+                  if (fs.readFileSync(path)) {
+                    fs.unlink(path, (err) => {})
+                  }
                 }
               )
             })
@@ -176,9 +180,11 @@ var hourShortcut = (element) => {
   return new Promise((resolve, reject) => {
     var value
     value = file_path_creation.createHourPath(element.ObjectName)
-    console.log('returned', value)
+    //console.log('returned', value)
     file_download.downloadFile(value.path).then(() => {
+      //console.log('downlad', value.path)
       file_extracting.extracting(value.path, 2).then((root) => {
+        //console.log('extract', value.path)
         //supression du fichier compresser
         fs.unlink(value.path, (err) => {})
         ///Add User to ONT-DN
@@ -189,6 +195,7 @@ var hourShortcut = (element) => {
 
         root.map((path, index) => {
           newindex = index + 3
+          // console.log('maping path', path)
           manipulatedata(path, value.time, element.ObjectName, newindex).then(
             (transformed) => {
               if (transformed.length !== 0) {
@@ -256,7 +263,9 @@ var hourShortcut = (element) => {
               }
             }
           )
-          fs.unlink(path, (err) => {})
+          if (fs.existsSync(path)) {
+            fs.unlink(path, (err) => {})
+          }
         })
         ////End
         /*findInDb
@@ -294,7 +303,9 @@ var dayShortcut = (element) => {
                 })
               }
               //supression du fichier unitaire
-              fs.unlink(path, (err) => {})
+              if (fs.existsSync(path)) {
+                fs.unlink(path, (err) => {})
+              }
             }
           )
         })

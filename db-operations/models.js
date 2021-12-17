@@ -84,6 +84,29 @@ const CpuUsageschema = new Schema({
   ],
 })
 
+//Ethernet Lines SLOT
+
+const EthernetLinesSLotschema = new Schema({
+  ObjectID: {
+    type: Schema.Types.String,
+  },
+  data: [
+    {
+      'interface Ingress Discards': Schema.Types.String,
+      'interface NU cast Packets': Schema.Types.String,
+      'interface Ingress Octets': Schema.Types.String,
+      'interface Outgress Discards': Schema.Types.String,
+
+      'interface Outgress NU cast Packets': Schema.Types.String,
+      'Interface Outgress Octets': Schema.Types.String,
+      'interface Administration Status': Schema.Types.String,
+      'interface High Speed': Schema.Types.String,
+      'interface Operation Status': Schema.Types.String,
+      timestamp: Schema.Types.Date,
+      olt: Schema.Types.String,
+    },
+  ],
+})
 //Ethernet Port
 const EthernetPortschema = new Schema({
   ObjectID: {
@@ -169,8 +192,6 @@ const Ponschema = new Schema({
       'interface Operation Status': Schema.Types.String,
       timestamp: Schema.Types.Date,
       olt: Schema.Types.String,
-
-      type: Schema.Types.String,
     },
   ],
 })
@@ -225,6 +246,7 @@ module.exports = {
   OntAggGemschema,
   vlanPortschema,
   CpuUsageschema,
+  EthernetLinesSLotschema,
   EthernetPortschema,
   OntEthPortschema,
   Ontschema,

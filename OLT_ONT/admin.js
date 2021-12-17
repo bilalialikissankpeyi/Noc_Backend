@@ -1,8 +1,8 @@
 module.exports.OLT = [
   {
-    ObjectName: 'MINA-7360FX8',
-    IPAddress: '10.182.128.178',
-    Name: 'MINA-7360FX8',
+    ObjectName: 'DGTG',
+    IPAddress: '10.182.35.130',
+    Name: 'DGTG',
     NEFamily: 'ISAM/FTTB/FTTN',
     FIELD5: '',
   },

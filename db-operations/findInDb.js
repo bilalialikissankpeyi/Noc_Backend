@@ -13,6 +13,11 @@ const EthernetPort = model(
   models.EthernetPortschema,
   'EthernetPort'
 )
+const EthernetLinesLot = model(
+  'EthernetLinesLot',
+  models.EthernetLinesSLotschema,
+  'EthernetLinesLot'
+)
 const OntEthPort = model('OntEthPort', models.OntEthPortschema, 'OntEthPort')
 const Ont = model('Ontschema', models.Ontschema, 'ISAM_ONT')
 const OntVeipPort = model(
@@ -28,9 +33,20 @@ const VlanPortAssociation = model(
   'VlanPortAssociation'
 )
 
-//
-var DashBoardLastData = async (collection, last) => {
+var DashBoardLastData = async (
+  dbname,
+  collection,
+  ObjectName,
+  startdate,
+  enddate,
+  olt
+) => {
+  console.log(collection)
   var final_collection
+  var d1s = new Date(startdate)
+  var d2s = new Date(enddate)
+  var end = new Date(d2s.toISOString())
+  var start = new Date(d1s.toISOString())
   switch (collection) {
     case 'BridgePort':
       final_collection = BridgePort
@@ -43,6 +59,9 @@ var DashBoardLastData = async (collection, last) => {
       break
     case 'CpuUsage':
       final_collection = CpuUsage
+      break
+    case 'EthernetLinesLot':
+      final_collection = EthernetLinesLot
       break
     case 'EthernetPort':
       final_collection = EthernetPort
@@ -68,11 +87,89 @@ var DashBoardLastData = async (collection, last) => {
     default:
   }
   return new Promise((resolve, reject) => {
-    console.log('haha')
     mongoose
       .connect(url)
       .then(() => {
-        console.log('here')
+        console.log(final_collection)
+        final_collection
+          .aggregate([
+            {
+              $project: {
+                ObjectID: 1,
+                data: {
+                  $filter: {
+                    input: '$data',
+                    as: 'index',
+                    cond: {
+                      $and: [
+                        {
+                          $gte: ['$$index.timestamp', start],
+                        },
+                        {
+                          $lte: ['$$index.timestamp', end],
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+          ])
+          .then((result) => {
+            console.log(result)
+            resolve(result)
+          })
+      })
+      .catch(console.log)
+  })
+}
+///
+/*
+var DashBoardLastData = async (collection, last) => {
+  var final_collection
+  switch (collection) {
+    case 'BridgePort':
+      final_collection = BridgePort
+      break
+    case 'ONTAggGem':
+      final_collection = OntAggGem
+      break
+    case 'vlanPort':
+      final_collection = vlanPort
+      break
+    case 'CpuUsage':
+      final_collection = CpuUsage
+      break
+    case 'EthernetLinesLot':
+      final_collection = EthernetLinesLot
+      break
+    case 'EthernetPort':
+      final_collection = EthernetPort
+      break
+    case 'ISAM_ONT':
+      final_collection = Ont
+      break
+    case 'OntEthPort':
+      final_collection = OntEthPort
+      break
+    case 'OntVeipPort':
+      final_collection = OntVeipPort
+      break
+    case 'Pon':
+      final_collection = Pon
+      break
+    case 'Uni':
+      final_collection = Uni
+      break
+    case 'VlanPortAssociation':
+      final_collection = VlanPortAssociation
+      break
+    default:
+  }
+  return new Promise((resolve, reject) => {
+    mongoose
+      .connect(url)
+      .then(() => {
         final_collection
           .find()
           .select({
@@ -80,7 +177,7 @@ var DashBoardLastData = async (collection, last) => {
             data: { $elemMatch: { timestamp: { $gte: new Date(last) } } },
           })
           .then((result) => {
-            console.log(result[0].data.length)
+            console.log(final_collection, result[0])
             resolve(result)
           })
           .catch(console.log)
@@ -88,8 +185,7 @@ var DashBoardLastData = async (collection, last) => {
       .catch(console.log)
   })
 }
-
-//
+*/
 ///Query 15 minutes Data (Bridge,ONTAgg,Vlan)
 
 ///Get ONT activities INTO a last interval of time
@@ -107,6 +203,9 @@ var RequestLastData = async (dbname, collection, ObjectName, last, olt) => {
       break
     case 'CpuUsage':
       final_collection = CpuUsage
+      break
+    case 'EthernetLinesLot':
+      final_collection = EthernetLinesLot
       break
     case 'EthernetPort':
       final_collection = EthernetPort
@@ -191,6 +290,9 @@ var RequestTimeFrameData = async (
     case 'CpuUsage':
       final_collection = CpuUsage
       break
+    case 'EthernetLinesLot':
+      final_collection = EthernetLinesLot
+      break
     case 'EthernetPort':
       final_collection = EthernetPort
       break
@@ -221,7 +323,13 @@ var RequestTimeFrameData = async (
         console.log(final_collection)
         final_collection
           .aggregate([
-            { $match: { ObjectID: ObjectName } },
+            {
+              $match: {
+                $expr: {
+                  $regexMatch: { input: '$ObjectID', regex: ObjectName },
+                },
+              },
+            },
             {
               $project: {
                 ObjectID: 1,
@@ -245,7 +353,98 @@ var RequestTimeFrameData = async (
             },
           ])
           .then((result) => {
-            //console.log(result[0].data)
+            console.log(result)
+            resolve(result)
+          })
+      })
+      .catch(console.log)
+  })
+}
+
+var UserLastData = async (
+  dbname,
+  collection,
+  ObjectName,
+  startdate,
+  enddate,
+  olt
+) => {
+  console.log(collection)
+  var final_collection
+  var d1s = new Date(startdate)
+  var d2s = new Date(enddate)
+  var end = new Date(d2s.toISOString())
+  var start = new Date(d1s.toISOString())
+  switch (collection) {
+    case 'BridgePort':
+      final_collection = BridgePort
+      break
+    case 'ONTAggGem':
+      final_collection = OntAggGem
+      break
+    case 'vlanPort':
+      final_collection = vlanPort
+      break
+    case 'CpuUsage':
+      final_collection = CpuUsage
+      break
+    case 'EthernetLinesLot':
+      final_collection = EthernetLinesLot
+      break
+    case 'EthernetPort':
+      final_collection = EthernetPort
+      break
+    case 'ISAM_ONT':
+      final_collection = Ont
+      break
+    case 'OntEthPort':
+      final_collection = OntEthPort
+      break
+    case 'OntVeipPort':
+      final_collection = OntVeipPort
+      break
+    case 'Pon':
+      final_collection = Pon
+      break
+    case 'Uni':
+      final_collection = Uni
+      break
+    case 'VlanPortAssociation':
+      final_collection = VlanPortAssociation
+      break
+    default:
+  }
+  return new Promise((resolve, reject) => {
+    mongoose
+      .connect(url)
+      .then(() => {
+        console.log(final_collection)
+        final_collection
+          .aggregate([
+            {
+              $match: { ObjectID: ObjectName },
+            },
+            {
+              $project: {
+                ObjectID: 1,
+                data: {
+                  $filter: {
+                    input: '$data',
+                    as: 'index',
+                    cond: {
+                      $and: [
+                        {
+                          $gte: ['$$index.timestamp', start],
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+            },
+          ])
+          .then((result) => {
+            console.log(result)
             resolve(result)
           })
       })
@@ -253,14 +452,14 @@ var RequestTimeFrameData = async (
   })
 }
 /*
-start = new Date('13 December 2021 01:00 UTC')
-end = new Date('13 December 2021 02:02: UTC')*/
+start = new Date('13 November 2021 01:00 UTC')
+end = new Date('13 Novemberber 2021 02:02: UTC')
 
 //console.log(start.toISOString())
-/*RequestTimeFrameData(
+RequestTimeFrameData(
   'mydb',
-  'OntEthPort',
-  'MINA-7360FX8:R1.S1.LT8.PON2.ONT32',
+  'ISAM_ONT',
+  'MINA-7360FX8',
   new Date(start.toISOString()),
   new Date(end.toISOString()),
   'MINA-7360FX8'
@@ -397,4 +596,5 @@ module.exports = {
   findRelatedONT,
   updateCollection,
   DashBoardLastData,
+  UserLastData,
 }
