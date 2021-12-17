@@ -17,7 +17,7 @@ var downloadRemoteFiles = async (remoteLocation) => {
     await client.downloadTo(path.basename(remoteLocation), remoteLocation, 0)
   } catch (err) {
     console.log('this is the path')
-    //console.log(err)
+    console.log(err)
   }
   client.close()
 }

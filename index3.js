@@ -86,8 +86,10 @@ var maping = async (csvFilePath, root) => {
   var routes = []
   for (let i = 0; i < csvFilePath.length; i += 1) {
     var pathTofile = `${root}/${csvFilePath[i]}`
-    let res = await encapExtract(pathTofile, i, root)
-    writeIntoTheFile(pathTofile, res.data)
+    if (fs.existsSync(pathTofile)) {
+      let res = await encapExtract(pathTofile, i, root)
+      writeIntoTheFile(pathTofile, res.data)
+    }
     routes.push(pathTofile)
   }
   routes = await Promise.all(routes)

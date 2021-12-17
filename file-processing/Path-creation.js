@@ -1,64 +1,80 @@
-var createMinutePath = (OltID) => {
-  lastfifteen = new Date()
-  console.log('sendToDB', lastfifteen)
-  if (lastfifteen.getMinutes() === 1) {
-    lastfifteen.setMinutes(0)
-    lastfifteen.setMonth(lastfifteen.getMonth() + 1)
-  } else {
-    lastfifteen.setMinutes(lastfifteen.getMinutes() - 1)
-    lastfifteen.setMonth(lastfifteen.getMonth() + 1)
+var addZero = (value) => {
+  var toconsider = value
+  if (value < 10) {
+    var toconsider = '0' + `${value}`
   }
-  console.log('sendToDB', lastfifteen)
+  return toconsider
+}
+var createMinutePath = (OltID) => {
+  const lastfifteen = new Date()
+  console.log('lastfif before', lastfifteen.getUTCMonth())
+  console.log('utc month', lastfifteen.getUTCMonth())
+  lastfifteen.setMinutes(lastfifteen.getMinutes() - 1)
+  const time = new Date(lastfifteen)
+  time.setMonth(time.getMonth())
+  console.log('lastfif after', time)
+  console.log('toiso', new Date(lastfifteen.toISOString()))
   return {
     path:
       OltID +
-      'H-15M_15M_' +
-      lastfifteen.getFullYear() +
+      '_H-15M_15M_' +
+      addZero(lastfifteen.getFullYear()) +
       '-' +
-      lastfifteen.getMonth() +
+      addZero(lastfifteen.getMonth() + 1) +
       '-' +
-      lastfifteen.getDate() +
+      addZero(lastfifteen.getDate()) +
       '-' +
-      lastfifteen.getHours() +
+      addZero(lastfifteen.getHours()) +
       '-' +
-      lastfifteen.getMinutes() +
+      addZero(lastfifteen.getMinutes()) +
       '.tar.gz',
-    time: lastfifteen,
+    time: time,
   }
 }
 
 var createHourPath = (OltID) => {
-  lastHour = new Date()
+  const lastHour = new Date()
+  console.log('utc month', lastHour.getUTCMonth())
+  console.log('utc year', lastHour.getUTCFullYear())
+  console.log('utc date', lastHour.getUTCDate())
+  console.log('utc minute', lastHour.getUTCMinutes())
+  lastHour.setMinutes(lastHour.getMinutes() - 1)
+  const time = new Date(lastHour)
+  time.setMonth(time.getMonth())
   return {
     path:
       OltID +
-      'I-1H_' +
-      lastHour.getFullYear() +
+      '_I-1H_' +
+      addZero(lastHour.getFullYear()) +
       '-' +
-      lastHour.getMonth() +
+      addZero(lastHour.getMonth() + 1) +
       '-' +
-      lastHour.getDate() +
+      addZero(lastHour.getDate()) +
       '-' +
-      lastHour.getHours() +
+      addZero(lastHour.getHours()) +
       '.tar.gz',
-    time: lastHour,
+    time: time,
   }
 }
 
 var createDailyPath = (OltID) => {
-  lastDay = new Date()
-  lasDay.setDate(lasDay.getDate() - 1)
+  const lastDay = new Date()
+  console.log('utc month', lastDay.getUTCMonth())
+  lastDay.setDate(lastDay.getDate())
+  lastDay.setMinutes(lastDay.getMinutes() - 1)
+  const time = new Date(lastDay)
+  time.setMonth(time.getMonth())
   return {
     path:
       OltID +
       'H-24H_' +
-      lasDay.getFullYear() +
+      addZero(lastDay.getFullYear()) +
       '-' +
-      lasDay.getMonth() +
+      addZero(lastDay.getMonth() + 1) +
       '-' +
-      lasDay.getDate() +
+      addZero(lastDay.getDate()) +
       '.tar.gz',
-    time: lastDay,
+    time: time,
   }
 }
 

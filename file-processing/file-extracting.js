@@ -21,12 +21,17 @@ const daysCsvFilePath = ['iSAM_vlanPortAssociation1DayHistoryData.csv']
 
 var extracting = async (path, index) => {
   var csvFilePath
-  if (index === 1) {
-    csvFilePath = minutesCsvFilePath
-  } else if (index === 2) {
-    csvFilePath = hoursCsvFilePath
-  } else if (index === 3) {
-    csvFilePath = daysCsvFilePath
+  switch (index) {
+    case 1:
+      csvFilePath = minutesCsvFilePath
+      break
+    case 2:
+      csvFilePath = hoursCsvFilePath
+      break
+    case 3:
+      csvFilePath = daysCsvFilePath
+      break
+    default:
   }
   return new Promise(async (resolve, reject) => {
     var root = await index3.decompressFile(path, csvFilePath)
